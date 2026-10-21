@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mindmeld</title>
+    <link rel="stylesheet" type="text/css" href="static/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.4/socket.io.js"></script>
+    <script src="static/client.js" defer type="module"></script>
+</head>
+<body>
+    <div id="pastInfo">
+        <div id="round1" class="round">
+            <div class="question">
+                <p class="questionText">Which <b>profession</b> handles me the most?</p>
+                <ul class="answers">
+                    <li class="answer">Plumber</li>
+                    <li class="answer">Cook</li>
+                    <li class="answer">Teacher</li>
+                    <li class="answer correct">Stock Broker</li>
+                </ul>
+            </div>
+            <div class="question">
+                <p class="questionText">Which <b>genre</b> of entertainment do I play the biggest role in?</p>
+                <ul class="answers">
+                    <li class="answer">Romance</li>
+                    <li class="answer correct">Action</li>
+                    <li class="answer">Horror</li>
+                    <li class="answer">Sports</li>
+                </ul>
+            </div>
+        </div>
+        <div id="round2" class="round">
+            <div class="A/B-testing">
+                <div class="scale" ranking="1"></div>
+                <div class="options">
+                    <p class="A closer">Chair</p>
+                    <p class="B">Pumpkin</p>
+                </div>
+            </div>
+            <div class="A/B-testing">
+                <div class="scale" ranking="5"></div>
+                <div class="options">
+                    <p class="A">Table</p>
+                    <p class="B closer">Helicopter</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

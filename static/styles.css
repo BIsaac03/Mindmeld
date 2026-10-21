@@ -1,0 +1,112 @@
+*{
+    padding: 0px;
+    margin: 0px;
+}
+:root {
+    --correct-color: white;
+    --incorrect-color: black
+}
+
+body{
+    display: grid;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+#pastInfo{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+    height: fit-content;
+    padding: 30px;
+    background-color: rgb(183, 231, 215);
+}
+
+.round:has(.question){
+    grid-column: 1 / 2;
+    gap: 20px;
+
+}
+.round:has(.A\/B-testing){
+    grid-column: 2 / 3;
+    height: fit-content;
+    gap: 20px;
+}
+.round{
+    display: grid;
+    align-items: center;
+}
+
+.question{
+    display: grid;
+    gap: 10px;
+    background-color: whitesmoke;
+    padding: 10px;
+    border-radius: 20px;
+}
+.question .questionText{
+    text-align: center;
+}
+.question .answers{
+    list-style: decimal;
+    padding-left: 20px;
+}
+.answer.correct{
+    color: darkgreen;
+    font-weight: bold;
+}
+
+.A\/B-testing{
+    height: fit-content;
+    display: grid;
+    gap: 10px;
+    padding: 10px;
+}
+.A\/B-testing .scale{
+    width: 300px;
+    border-radius: 20px;
+    padding: 15px;
+}
+.A\/B-testing .scale[ranking="0"]{
+    background-image: linear-gradient(to right, var(--correct-color) 2.5%, var(--incorrect-color) 20%);
+}
+.A\/B-testing .scale[ranking="1"]{
+    background-image: linear-gradient(to right, var(--incorrect-color) 0%, var(--correct-color) 17.5%, var(--correct-color) 22.5%, var(--incorrect-color) 40%);
+}
+.A\/B-testing .scale[ranking="2"]{
+    background-image: linear-gradient(to right, var(--incorrect-color) 20%, var(--correct-color) 37.5%, var(--correct-color) 42.5%, var(--incorrect-color) 60%);
+}
+.A\/B-testing .scale[ranking="3"]{
+    background-image: linear-gradient(to right, var(--incorrect-color) 40%, var(--correct-color) 57.5%, var(--correct-color) 62.5%, var(--incorrect-color) 80%);
+}
+.A\/B-testing .scale[ranking="4"]{
+    background-image: linear-gradient(to right, var(--incorrect-color) 60%, var(--correct-color) 77.5%, var(--correct-color) 82.5%, var(--incorrect-color) 100%);
+}
+.A\/B-testing .scale[ranking="5"]{
+    background-image: linear-gradient(to right, var(--incorrect-color) 77.5%, var(--correct-color) 97.5%);
+}
+.A\/B-testing .options{
+    display: flex;
+    justify-content: space-between;
+}
+.A\/B-testing .closer{
+    color: darkgreen;
+    font-weight: bold;
+}
+
+#chooseQuestion{
+    position: absolute;
+    justify-self: center;
+    bottom: 15vh;
+    display: grid;
+    gap: 20px;
+    text-align: center;
+}
+#chooseQuestion button{
+    width: 60vw;
+    font-size: 4vh;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: lightgray;
+}
