@@ -118,3 +118,15 @@ body{
 #chooseQuestion button{
     width: 60vw;
 }
+
+#secretWord{
+    position: absolute;
+    justify-self: center;
+    display: grid;
+    gap: 10px;
+}
+
+#secretWord p{
+    text-align: center;
+    font-size: 80px;
+}

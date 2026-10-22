@@ -62,6 +62,41 @@ socket.on("chooseQuestion", (q1Text, q2Text) => {
     bodyElement.appendChild(questionChoicePopUp);
 })
 
+socket.on("displayRevealedLetters", (revealedLetters) => {
+    console.log("test");
+    beginWordReveal(revealedLetters.length);
+    revealAllLetters(revealedLetters);
+})
+
+function beginWordReveal(wordLength){
+    removeExistingElement("#secretWord");
+    const secretWord = document.createElement("div");
+    secretWord.id = "secretWord";
+    for (let i = 0; i < wordLength; i++){
+        const letterDiv = document.createElement("div");
+        letterDiv.classList.add(`letter${i}`);
+        const letter = document.createElement("p");
+        letter.textContent = "_";
+
+        letterDiv.appendChild(letter);
+        secretWord.appendChild(letterDiv);
+    }
+    secretWord.style.gridTemplateColumns = `repeat(${wordLength}, 1fr)`;
+    bodyElement.appendChild(secretWord);
+}
+function revealLetter(index, value){
+    const letterToReveal = document.querySelector(`#secretWord .letter${index} p`);
+    letterToReveal.textContent = value;
+}
+function revealAllLetters(revealedLetters){
+    console.log(revealedLetters);
+    for (let i = 0; i < revealedLetters.length; i++){
+        if (revealedLetters[i]){
+            revealLetter(i, revealedLetters[i]);
+        }
+    }
+}
+
 function removeExistingElement(querySelector){
     const elementToRemove = document.querySelector(querySelector);
     if (elementToRemove){

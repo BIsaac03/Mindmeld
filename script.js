@@ -42,6 +42,7 @@ class GameState {
     #gamePhase = "Word Generation";
     #wordList = [];
     #secretWord;
+    #revealedLetters = [];
     #questionOptions;
     #currentQuestion;
     #userAnswers;
@@ -54,6 +55,16 @@ class GameState {
     addToWordList(word){
         this.#wordList.push(word);
     }
+    revealWordLength(){
+        for (let i = 0; i < this.#secretWord[0].length; i++){
+            this.#revealedLetters.push(undefined);
+        }
+    }
+    revealNewLetter(){
+        const lettersLeft = this.#revealedLetters.filter(letter => letter == undefined).length;
+        const indexToReveal = Math.floor(Math.random() * lettersLeft);
+        this.#revealedLetters[indexToReveal] = this.#secretWord[0][indexToReveal];
+    }
     newRound(){
         this.#gameRound++;
         this.#questionOptions = undefined;
@@ -61,6 +72,7 @@ class GameState {
         this.#userAnswers = undefined;
         this.#spiritChoice = undefined;
     }
+
 
     set secretWord(wordToGuess){
         this.#secretWord = wordToGuess;
@@ -83,6 +95,9 @@ class GameState {
     }
     get wordList(){
         return this.#wordList;
+    }
+    get revealedLetters(){
+        return this.#revealedLetters;
     }
     get secretWord() {
         return this.#secretWord;
@@ -109,13 +124,20 @@ io.on("connection", (socket) => {
 
     socket.on("chosenWord", (wordToGuess) => {
         myGame.secretWord = wordToGuess;
-        myGame.gamePhase == "Question Generation";
+        myGame.gamePhase = "Question Generation";
         chooseQuestion(socket);
     })
 
     socket.on("chosenQuestion", (questionText) => {
         myGame.currentQuestion = questionText;
-        myGame.gamePhase == "Question Responses";
+        myGame.gamePhase = "Question Responses";
+        
+        // !! end game testing
+        myGame.revealWordLength();
+        myGame.revealNewLetter();
+        myGame.revealNewLetter();
+        io.emit("displayRevealedLetters", myGame.revealedLetters);
+
         socket.broadcast.emit("questionToAnswer", (questionText));
     })
 
@@ -166,6 +188,6 @@ async function generateRandomWords(socket, numWordsToGenerate){
         }
         myGame.addToWordList([generatedWord, difficulty]);
     }
-    myGame.gamePhase == "Word Selection";
+    myGame.gamePhase = "Word Selection";
     socket.emit("chooseWord", myGame.wordList);
 }
