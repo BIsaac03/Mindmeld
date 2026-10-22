@@ -95,18 +95,26 @@ body{
     font-weight: bold;
 }
 
-#chooseQuestion{
+#chooseWord, #chooseQuestion{
     position: absolute;
     justify-self: center;
     bottom: 15vh;
     display: grid;
     gap: 20px;
+}
+#chooseWord{
+    grid-template: 1fr 1fr / 1fr 1fr;
+}
+#chooseQuestion{
     text-align: center;
 }
-#chooseQuestion button{
-    width: 60vw;
+
+#chooseWord button, #chooseQuestion button{
     font-size: 4vh;
     padding: 20px;
     border-radius: 10px;
     background-color: lightgray;
+}
+#chooseQuestion button{
+    width: 60vw;
 }
