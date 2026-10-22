@@ -34,30 +34,89 @@ io.use((socket, next) => {
 });
 
 let currentID = undefined;
-
-const wordsToChooseFrom = [];
 const ai = new GoogleGenAI({});
+
+class GameState {
+    #gameID;
+    #gameRound = 0;
+    #gamePhase = "Word Generation";
+    #wordList = [];
+    #secretWord;
+    #questionOptions;
+    #currentQuestion;
+    #userAnswers;
+    #spiritChoice;
+
+    constructor(gameID) {
+        this.#gameID = gameID;
+    }
+
+    addToWordList(word){
+        this.#wordList.push(word);
+    }
+    newRound(){
+        this.#gameRound++;
+        this.#questionOptions = undefined;
+        this.#currentQuestion = undefined;
+        this.#userAnswers = undefined;
+        this.#spiritChoice = undefined;
+    }
+
+    set secretWord(wordToGuess){
+        this.#secretWord = wordToGuess;
+    }
+    set gameRound(newRound){
+        this.#gameRound = newRound;
+    }
+    set gamePhase(newPhase){
+        this.#gamePhase = newPhase;
+    }
+    set questionOptions(options){
+        this.#questionOptions = options;
+    }
+    set currentQuestion(question){
+        this.#currentQuestion = question;
+    }
+
+    get gameRound(){
+        return this.#gameRound
+    }
+    get wordList(){
+        return this.#wordList;
+    }
+    get secretWord() {
+        return this.#secretWord;
+    }
+    get gamePhase(){
+        return this.#gamePhase
+    }
+}
+
+const myGame = new GameState(crypto.randomUUID());
+
+let generatedWords = false
+let generatingWords = false;
 
 /////////// SERVER EVENTS
 io.on("connection", (socket) => {
-    if (wordsToChooseFrom.length == 0){
+    if (myGame.wordList.length == 4){
+        socket.emit("chooseWord", myGame.wordList);
+    }
+    else if (myGame.gamePhase == "Word Generation"){
+        myGame.gamePhase = "Waiting on Generation";
         generateRandomWords(socket, 4);
     }
-    else{
-        socket.emit("chooseWord", wordsToChooseFrom);
-    }
 
-    socket.on("chosenWord", ([word, difficulty]) => {
-        // !! save word
+    socket.on("chosenWord", (wordToGuess) => {
+        myGame.secretWord = wordToGuess;
+        myGame.gamePhase == "Question Generation";
         chooseQuestion(socket);
     })
-    
 
     socket.on("chosenQuestion", (questionText) => {
-        // !! save chosen question in game object
-        const currentQuestion = questionText;
-        
-        io.emit("questionToAnswer", (questionText));
+        myGame.currentQuestion = questionText;
+        myGame.gamePhase == "Question Responses";
+        socket.broadcast.emit("questionToAnswer", (questionText));
     })
 
 
@@ -68,7 +127,6 @@ io.on("connection", (socket) => {
         // !! reveal and save chosen ranking
     })
 })
-
 httpServer.listen(port, function () {
     var host = httpServer.address().address
     var port = httpServer.address().port
@@ -76,11 +134,15 @@ httpServer.listen(port, function () {
 });
 
 function chooseQuestion(socket){
-    // !! pull questions from JSON and save in game object
-    const q1 = "One Option";
-    const q2 = "Another Option";
+    if (myGame.gamePhase == "Question Generation"){
+        // !! pull questions from JSON and save in game object
+        const q1 = "One Option";
+        const q2 = "Another Option";
+        myGame.questionOptions = [q1, q2];
 
-    socket.emit("chooseQuestion", q1, q2);
+        myGame.gamePhase = "Question Selection";
+        socket.emit("chooseQuestion", q1, q2);
+    }
 }
 
 async function generateRandomWords(socket, numWordsToGenerate){
@@ -92,7 +154,7 @@ async function generateRandomWords(socket, numWordsToGenerate){
 
             const modelResponse = await ai.models.generateContent({
                 model: "gemini-3.5-flash-lite",
-                contents:  `How easy would the word '${generatedWord}' be to guess using a series of yes/no questions. Rate physical objects and concrete ideas as easier than gerunds and the like. 
+                contents:  `How easy would the word '${generatedWord}' be to guess using a series of yes/no questions. Rate physical objects as easier than ideas, gerunds, and the like. 
                             Uncommon words are difficult to guess. Respond only with a value from 1(easiest) - 20(hardest). Pay special attention to values you assign to words in the 1-5 range.
                             Use the following examples as a rough guidline 1: car, arm, house; 2: finger, bottle, tissue; 3: coaster, driveway, whisker; 4: antennae, cord, alarm; 5: diorite, flow, occupation;`,
             });
@@ -102,7 +164,8 @@ async function generateRandomWords(socket, numWordsToGenerate){
 
             console.log(`Candidate for word '${i}': '${generatedWord}' rated as a '${difficulty}'`);
         }
-        wordsToChooseFrom.push([generatedWord, difficulty]);
+        myGame.addToWordList([generatedWord, difficulty]);
     }
-    socket.emit("chooseWord", wordsToChooseFrom);
+    myGame.gamePhase == "Word Selection";
+    socket.emit("chooseWord", myGame.wordList);
 }
