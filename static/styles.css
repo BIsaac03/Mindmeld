@@ -9,6 +9,7 @@
 
 body{
     display: grid;
+    background-color: gray;
     width: 100vw;
     height: 100vh;
     overflow: hidden;
@@ -20,7 +21,6 @@ body{
     justify-items: center;
     height: fit-content;
     padding: 30px;
-    background-color: rgb(183, 231, 215);
 }
 
 .round:has(.question){
@@ -40,20 +40,33 @@ body{
 
 .question{
     display: grid;
-    gap: 10px;
+    gap: 30px;
     background-color: whitesmoke;
-    padding: 10px;
+    padding: 20px;
     border-radius: 20px;
+    box-shadow: 0 5px 5px 4px #bbbbbb;
 }
 .question .questionText{
     text-align: center;
 }
 .question .answers{
-    list-style: decimal;
-    padding-left: 20px;
+    display: grid;
+    justify-items: center;
+    grid-template: 1fr 1fr / 1fr 1fr;
+    gap: 20px;
+}
+.answer{
+    display: grid;
+    place-items: center;
+    width: 150px;
+    height: 50px;
+    background: linear-gradient(to bottom, transparent calc(50% - 1px), rgb(239 222 197) 50%, transparent calc(50% + 1px)),
+                linear-gradient(to right, transparent calc(50% - 1px), rgb(239 222 197) 50%, transparent calc(50% + 1px));
+    background-color: antiquewhite;
 }
 .answer.correct{
-    color: darkgreen;
+    width: calc(100% + 10px);
+    height: calc(100% + 10px);
     font-weight: bold;
 }
 
