@@ -119,7 +119,7 @@ io.on("connection", (socket) => {
     }
     else if (myGame.gamePhase == "Word Generation"){
         myGame.gamePhase = "Waiting on Generation";
-        //generateRandomWords(socket, 4);
+        generateRandomWords(socket, 4);
     }
 
     socket.on("chosenWord", (wordToGuess) => {
@@ -168,25 +168,29 @@ function chooseQuestion(socket){
 }
 
 async function generateRandomWords(socket, numWordsToGenerate){
-    for (let i = 0; i < numWordsToGenerate; i++){
-        let generatedWord = undefined;
-        let difficulty = Number.MAX_VALUE;
-        while(difficulty > 5){
-            generatedWord = faker.word.noun();
+    const res = await fetch("https://randomapi.dev/api/words?type=noun&count=50");
+    const { data, meta } = await res.json();
 
-            const modelResponse = await ai.models.generateContent({
-                model: "gemini-3.5-flash-lite",
-                contents:  `How easy would the word '${generatedWord}' be to guess using a series of yes/no questions. Rate physical objects as easier than ideas, gerunds, and the like. 
-                            Uncommon words are difficult to guess. Respond only with a value from 1(easiest) - 20(hardest). Pay special attention to values you assign to words in the 1-5 range.
-                            Use the following examples as a rough guidline 1: car, arm, house; 2: finger, bottle, tissue; 3: coaster, driveway, whisker; 4: antennae, cord, alarm; 5: diorite, flow, occupation;`,
-            });
-            if (Number(modelResponse.text)){
-                difficulty = Number(modelResponse.text);
-            }
+    const modelResponse = await ai.models.generateContent({
+        model: "gemini-3.5-flash-lite",
+        contents:  `Examine these nouns: ${JSON.stringify(data)}. For each, evaluate how difficult it would be to guess using a series of yes/no questions. Rate physical objects as easier than ideas, gerunds, and the like. 
+                    Uncommon words are difficult to guess. Respond only with a string  of 50 digits, each corresponding value from 1(easiest) - 9(hardest). Pay special attention to values you assign to words in the 1-5 range.
+                    Use the following examples as a rough guidline 1: car, arm, house; 2: finger, bottle, tissue; 3: coaster, driveway, whisker; 4: antennae, cord, alarm; 5: diorite, flow, occupation;`,
+    });
 
-            console.log(`Candidate for word '${i}': '${generatedWord}' rated as a '${difficulty}'`);
+    let numValidCandidates = 0;
+    for (let i = 0; i < 50; i++){
+        const difficulty = modelResponse.text[i];
+        const generatedWord = data[i].word;
+        if(difficulty <= 5){
+            myGame.addToWordList([generatedWord, difficulty]);
+            numValidCandidates++;
         }
-        myGame.addToWordList([generatedWord, difficulty]);
+        console.log(`'${generatedWord}' rated as a '${difficulty}'`);
+
+        if(numValidCandidates == numWordsToGenerate){
+            break;
+        }
     }
     myGame.gamePhase = "Word Selection";
     socket.emit("chooseWord", myGame.wordList);
