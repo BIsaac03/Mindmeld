@@ -2,15 +2,23 @@
     padding: 0px;
     margin: 0px;
 }
+
 :root {
     --correct-color: cornsilk;
     --incorrect-color: #5f5d56;
     --paper-color: antiquewhite;
 }
-
+@font-face {
+    font-family: "EagleHorizon";
+    src: url("./EagleHorizonP.ttf");
+}
+@font-face {
+    font-family: "NightBubble";
+    src: url("./NightBubble.ttf");
+}
 body{
     display: grid;
-    background-color: gray;
+    background-color: #332f2f;
     width: 100vw;
     height: 100vh;
     overflow: hidden;
@@ -49,6 +57,7 @@ body{
 }
 .question .questionText{
     text-align: center;
+    font-family: "NightBubble";
 }
 .question .answers{
     display: grid;
@@ -59,11 +68,15 @@ body{
 .answer{
     display: grid;
     place-items: center;
-    width: 150px;
+    width: 300px;
     height: 50px;
     background: linear-gradient(to bottom, transparent calc(50% - 1px), rgb(239 222 197) 50%, transparent calc(50% + 1px)),
                 linear-gradient(to right, transparent calc(50% - 1px), rgb(239 222 197) 50%, transparent calc(50% + 1px));
     background-color: var(--paper-color);
+    font-family: "EagleHorizon";
+    font-size: 25px;
+    letter-spacing: 1px;
+    overflow: auto;
 }
 .answer.correct{
     width: calc(100% + 10px);
@@ -114,7 +127,9 @@ body{
     justify-self: center;
     bottom: 15vh;
     display: grid;
+    justify-items: center;
     gap: 20px;
+    font-family: "NightBubble";
 }
 #chooseWord{
     grid-template: 1fr 1fr / 1fr 1fr;
@@ -122,12 +137,23 @@ body{
 #chooseQuestion{
     text-align: center;
 }
+#chooseWord div p{
+    position: relative;
+    top: -74%;
+    left: 6%;
+    font-size: 20px;
+}
 
 #chooseWord button, #chooseQuestion button{
-    font-size: 4vh;
+    font-size: 6vh;
     padding: 20px;
     border-radius: 10px;
     background-color: lightgray;
+    font-family: inherit;
+    letter-spacing: inherit;
+}
+#chooseWord button{
+    padding: 25px 15px 15px 20px;
 }
 #chooseQuestion button{
     width: 60vw;
@@ -138,6 +164,8 @@ body{
     justify-self: center;
     display: grid;
     gap: 10px;
+    color: white;
+    font-family: "NightBubble";
 }
 
 #secretWord p{
@@ -179,4 +207,12 @@ svg{
     position: absolute;
     place-self: center;
     overflow: visible;
+}
+
+#illuminationLayer {  
+
+    background: radial-gradient(circle at 50% 33%, transparent, #000000a6);
+    height: 100dvh;
+    z-index: 2;
+    pointer-events: none;
 }
