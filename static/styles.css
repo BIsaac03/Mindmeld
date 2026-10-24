@@ -3,8 +3,9 @@
     margin: 0px;
 }
 :root {
-    --correct-color: white;
-    --incorrect-color: black
+    --correct-color: cornsilk;
+    --incorrect-color: #5f5d56;
+    --paper-color: antiquewhite;
 }
 
 body{
@@ -62,7 +63,7 @@ body{
     height: 50px;
     background: linear-gradient(to bottom, transparent calc(50% - 1px), rgb(239 222 197) 50%, transparent calc(50% + 1px)),
                 linear-gradient(to right, transparent calc(50% - 1px), rgb(239 222 197) 50%, transparent calc(50% + 1px));
-    background-color: antiquewhite;
+    background-color: var(--paper-color);
 }
 .answer.correct{
     width: calc(100% + 10px);
@@ -144,19 +145,34 @@ body{
     font-size: 80px;
 }
 
-#candle{
-    width: 200px;
-    height: 200px;
+#ABResults{
     position: absolute;
     place-self: center;
+    height: 60vh;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    row-gap: 85px;
 }
+#ABResults .choices{
+    display: flex;
+    gap: 260px;
+    justify-content: space-between;
+}
+#ABResults .answer{
+    background: var(--paper-color);
+}
+#candle{
+    grid-column: 1 / 3;
+}
+
 #candle .candle{
-    position: relative;
+    position: absolute;
+    width: 100%;
 }
 #candle .flame{
-    position: relative;
-    left: 32%;
-    top: 10%;
+    position: absolute;
+    width: 100%;
+    top: 11%;
     z-index: 1;
 }
 svg{

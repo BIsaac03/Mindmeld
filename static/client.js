@@ -13,20 +13,38 @@ const socket = io("http://localhost:3000", {
 const bodyElement = document.body;
 
 socket.on("chooseWord", (wordList) => {
+    // !! A/B result testing
+    const ABResults = document.createElement("div");
+    ABResults.id = "ABResults"
+
+    const choices = document.createElement("div");
+    choices.classList.add("choices");
+
+    const answerA = document.createElement("div");
+    answerA.classList.add("answer");
+    const AText = document.createElement("p");
+    AText.textContent = "Onion";
+    answerA.appendChild(AText);
+
+    const answerB = document.createElement("div");
+    answerB.classList.add("answer");
+    const BText = document.createElement("p");
+    BText.textContent = "Avalanche";
+    answerB.appendChild(BText);
+
+    choices.append(answerA, answerB);
+    ABResults.appendChild(choices);
+    bodyElement.appendChild(ABResults);
+
+
     /// !! candle testing
-    addFlamingCandle();
+    addFlamingCandle(ABResults);
     setTimeout(() => {
         animateFlame("Flame2");
     }, 100);
     setTimeout(() => {
-        animateFlame("Flame");
+        animateFlame("Flame1");
     }, 1100);
-    setTimeout(() => {
-        animateFlame("Flame_flicker2");
-    }, 2100);
-    setTimeout(() => {
-        animateFlame("Flame");
-    }, 3100);
 
     removeExistingElement("#chooseWord");
     const wordChoicePopUp = document.createElement("div");
@@ -124,7 +142,7 @@ async function svgToText(url) {
     const svgText = await response.text();
     return svgText;
 }
-async function addFlamingCandle(){
+async function addFlamingCandle(divToAddTo){
     const candleText = await svgToText("/static/Images/Candle.svg");
     const flameText = await svgToText("/static/Images/Flame.svg");
 
@@ -140,7 +158,7 @@ async function addFlamingCandle(){
     const candleDiv = document.createElement("div");
     candleDiv.id = "candle";
     candleDiv.append(flameSvg, candleSvg);
-    bodyElement.appendChild(candleDiv);
+    divToAddTo.appendChild(candleDiv);
 }
 async function animateFlame(newFlame) {
     const newFlameText = await svgToText(`/static/Images/${newFlame}.svg`);
