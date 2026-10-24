@@ -143,3 +143,24 @@ body{
     text-align: center;
     font-size: 80px;
 }
+
+#candle{
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    place-self: center;
+}
+#candle .candle{
+    position: relative;
+}
+#candle .flame{
+    position: relative;
+    left: 32%;
+    top: 10%;
+    z-index: 1;
+}
+svg{
+    position: absolute;
+    place-self: center;
+    overflow: visible;
+}

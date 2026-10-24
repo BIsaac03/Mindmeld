@@ -119,7 +119,7 @@ io.on("connection", (socket) => {
     }
     else if (myGame.gamePhase == "Word Generation"){
         myGame.gamePhase = "Waiting on Generation";
-        //generateRandomWords(socket, 4);
+        generateRandomWords(socket, 4);
     }
 
     socket.on("chosenWord", (wordToGuess) => {

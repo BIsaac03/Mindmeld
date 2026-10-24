@@ -13,6 +13,21 @@ const socket = io("http://localhost:3000", {
 const bodyElement = document.body;
 
 socket.on("chooseWord", (wordList) => {
+    /// !! candle testing
+    addFlamingCandle();
+    setTimeout(() => {
+        animateFlame("Flame2");
+    }, 100);
+    setTimeout(() => {
+        animateFlame("Flame");
+    }, 1100);
+    setTimeout(() => {
+        animateFlame("Flame_flicker2");
+    }, 2100);
+    setTimeout(() => {
+        animateFlame("Flame");
+    }, 3100);
+
     removeExistingElement("#chooseWord");
     const wordChoicePopUp = document.createElement("div");
     wordChoicePopUp.id = "chooseWord";
@@ -102,4 +117,45 @@ function removeExistingElement(querySelector){
     if (elementToRemove){
         elementToRemove.remove();
     }
+}
+
+async function svgToText(url) {
+    const response = await fetch(url);
+    const svgText = await response.text();
+    return svgText;
+}
+async function addFlamingCandle(){
+    const candleText = await svgToText("/static/Images/Candle.svg");
+    const flameText = await svgToText("/static/Images/Flame.svg");
+
+    const parser = new DOMParser();
+    const candleDoc = parser.parseFromString(candleText, "image/svg+xml");
+    const flameDoc = parser.parseFromString(flameText, "image/svg+xml");
+    
+    const candleSvg = candleDoc.querySelector("svg");
+    candleSvg.classList.add("candle");
+    const flameSvg = flameDoc.querySelector("svg");
+    flameSvg.classList.add("flame");
+
+    const candleDiv = document.createElement("div");
+    candleDiv.id = "candle";
+    candleDiv.append(flameSvg, candleSvg);
+    bodyElement.appendChild(candleDiv);
+}
+async function animateFlame(newFlame) {
+    const newFlameText = await svgToText(`/static/Images/${newFlame}.svg`);
+
+    const parser = new DOMParser();
+    const newFlameDoc = parser.parseFromString(newFlameText, "image/svg+xml");
+    const newFlameSvg = newFlameDoc.querySelector("svg");
+
+    const startPaths = document.querySelectorAll("#candle .flame path");
+    const targetPaths = newFlameSvg.querySelectorAll("path");
+
+    startPaths.forEach((path, index) => {
+        const target = targetPaths[index]; 
+        if (target) {
+            gsap.to(path, {duration: 2.5, morphSVG: target});
+        }
+    });
 }
